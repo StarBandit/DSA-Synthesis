@@ -1,0 +1,595 @@
+1. 
+Problem: Choose a seat for 1 student in a class of M * N positions (excluding the teacher's desk).
+Solution: Make a 2D array M*N. Mark positions with people (in code: equal to 1), empty positions (in code: equal to 0). Based on the matrix, enter the row and column of the empty position to determine student seating.
+Code: 
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+
+using namespace std;
+
+int main() {
+	srand((int)time(0));
+	int M = rand() % 6;
+	int N = rand() % 6;
+	int a[10][10];
+	for (int i = 0; i < M; i++)
+		for (int j = 0; j < N; j++)
+			a[i][j] = 1;
+	int m = rand() % M;
+	int n = rand() % N;
+	a[m][n] = 0;
+	for (int i = 0; i < M; i++) {
+		for (int j = 0; j < N; j++)
+			cout << a[i][j] << "  ";
+		cout << endl;
+	}
+	do {
+		cout << "row position= ";
+		cin >> m;
+		cout << "column position= ";
+		cin >> n;
+		if (a[m - 1][n - 1] == 1)
+			cout << "Someone is already sitting!!!" << endl;
+		else cout << "Please sit.";
+	} while (a[m - 1][n - 1] != 0);
+
+	return 0;
+}
+
+2.
+Problem: Make a list of names of n students in class
+Solution: Use a linked list to create data containing each student's name and make a list of student names according to the saved data.
+Code:
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+struct node {
+	string name;
+	node* next;
+};
+
+node* createNode(string st) {
+    node* temp = new node;
+    temp->next = NULL;
+    temp->name = st;
+    return temp;
+}
+
+void printList(node* head) {
+	node* p = head;
+	cout << "Student list:" << endl;
+	while (p != NULL) {
+		cout << p->name << endl;
+		p = p->next;
+	}
+}
+
+node* addElement(node* p, string st) {
+	node* temp = createNode(st);
+	p->next = temp;
+	return temp;
+}
+
+int main() {
+	int n;
+	string st;
+	cout << "n= ";
+	cin >> n;
+	cin.ignore();
+	cout << "Student's name: ";
+	getline(cin, st);
+	node* head = createNode(st);
+	node* p = head;
+	for (int i = 1; i < n; i++) {
+		cout << "Student's name: ";
+		getline(cin, st);
+		p = addElement(p, st);
+	}
+	printList(head);
+	return 0;
+}
+
+3.
+Problem: Load n bullets into a shotgun, firing m consecutively (m<=n). Is the gun still ammo?
+Solution: Each loaded bullet will be pushed to the bottom and the first loaded bullet must be the last to be fired. Therefore, we number each bullet and make a stack with 3 main operations: add an element to the top, get an element from the top of the stack and check if the stack is empty or not.
+Code:
+#include <iostream>
+
+using namespace std;
+
+struct node {
+    int data;
+	node* next;
+};
+
+node* createNode(int x) {
+    node* temp = new node;
+    temp->next = NULL;
+    temp->data = x;
+    return temp;
+}
+
+bool isEmpty(node* S) {
+    if (S == NULL) {
+        cout << "No more bullet" << endl;
+        return true;
+    }
+    cout << "Gun with ammo" << endl;
+    return false;
+}
+
+void push(node*& S, int x) {
+    node* p = createNode(x);
+    p->next = S;
+    S = p;
+}
+
+node* pop(node*& S) {
+    node* p = S;
+    S = S->next;
+    p->next = NULL;
+    return p;
+}
+
+int main(){
+    node* S{};
+    int n, x, m;
+    cout << "n= ";
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        cout << "Number you want to mark: ";
+        cin >> x;
+        push(S, x);
+    }
+    cout << "m= ";
+    cin >> m;
+    for (int i = 0; i < m; i++)
+        pop(S);
+    bool flag = isEmpty(S);
+
+    return 0;
+}
+
+4.
+Problem: A supermarket checkout counter serves more than n people per day. Write a chapter that makes payments to each person and calculates the total proceeds, knowing the value-added tax is 10%.
+Solution: Due to the supermarket's payment method, "first in, first out". Therefore, we create a queue with 3 operations adding n elements, taking n elements out and checking if the queue is empty (full of people)
+Code:
+#include <iostream>
+#include <ctime>
+
+using namespace std;
+
+struct node {
+    int data;
+	node* next;
+};
+
+node* createNode(int x) {
+    node* temp = new node;
+    temp->next = NULL;
+    temp->data = x;
+    return temp;
+}
+
+bool isEmpty(node* Q) {
+    if (Q == NULL) 
+        return true;
+    return false;
+}
+
+void enQueue(node*& q, node*& t, int k) {
+    node* p = createNode(k);
+    if (q == NULL)
+        q = t = p;
+    else {
+        t->next = p;
+        t = p;
+    }
+}
+
+node* deQueue(node*& q, node*& t, int& S) {
+    node* p;
+    if (isEmpty(q)) 
+        return NULL;
+    p = q;
+    if (q == t)
+        q = t = NULL;
+    else {
+        S = S + q->data;
+        q = q->next;
+    }
+    p->next = NULL;
+    return p;
+}
+
+int main(){
+    srand((int)time(0));
+    int n, x, S = 0;
+    cout << "n= ";
+    cin >> n;
+    node* q = NULL, * t = NULL;
+    for (int i = 0; i < n; i++) {
+        x = rand() % 1000000;
+        enQueue(q, t, x);
+    }
+    for (int i = 0; i < n; i++)
+        deQueue(q, t, S);
+    S = S * 1.1;
+    bool flag = isEmpty(q);
+    if (flag) {
+        cout << "End of payment queue." << endl;
+        cout << "Total amount: " << S << endl;
+    }
+    return 0;
+}
+
+5.
+Problem: Put n people in a row in order from highest to lowest by the 2 people in front swap with the person behind if taller and repeat until the row is complete. Count the number of items needed to complete the order as required.
+Solution: Implement bubble sort algorithm in order from smallest to largest for n arrays containing height information of each person.
+Code:
+#include <iostream>
+#include <ctime>
+
+using namespace std;
+
+void swap(int* a, int* b) {
+	int* c;
+
+	c = new int;
+
+	*c = *a;
+	*a = *b;
+	*b = *c;
+
+	delete c;
+}
+
+int main(){
+    srand((int)time(0));
+    int n, a[100], k = 0;
+
+    cout << "n= ";
+    cin >> n;
+    cout << "At first: ";
+    for (int i = 0; i < n; i++) {
+        a[i] = rand() % 200 + 1;
+        cout << a[i] << " ";
+    }
+
+    cout << "\nAfter: ";
+    for (int i = 1; i < n; i++)
+        for (int j = n - 1; j >= i; j--)
+            if (a[j] < a[j - 1]) {
+                swap(a[j], a[j - 1]);
+                k++;
+            }
+
+    for (int i = 0; i < n; i++)
+        cout << a[i] << " ";
+    cout << "\nNumber of times to change places: " << k << endl;
+
+    return 0;
+}
+
+6.
+Problem: Make a diagram of an exam room with 28 seats (8 rows, 4 columns) according to the number of each student and in the direction from small to large so that the student with the smallest number is sitting in the left corner of the first row. and the next number is to the right of the student with the smallest number, and so on until the last place (sorted from left to right, top to bottom)
+Solution: Make a 2-dimensional array of 8 rows, 4 columns and implement the Selection Sort algorithm to select the student with the smallest number to be placed in the first element of the array, do the same until the last element.
+Code:
+#include <iostream>
+#include <ctime>
+
+using namespace std;
+
+int main(){
+    srand((int)time(0));
+    int n, a[28], k1 = 0, k2 = 0;
+    int b[7][4];
+
+    for (int i = 0; i < 28; i++) 
+        a[i] = rand() % 9000 + 1000;
+
+    for (int i = 0; i < 27; i++) {
+        int minIndex = i;
+        int minValue = a[i];
+        for (int j = i + 1; j < 28; j++)
+            if (a[j] < minValue) {
+                minIndex = j;
+                minValue = a[j];
+            }
+        a[minIndex] = a[i];
+        a[i] = minValue;
+
+        b[k1][k2] = minValue;
+        k2++;
+        if (k2 == 4) {
+            k2 = 0;
+            k1++;
+        }
+    }
+    cout << "Class diagram (excluding the teacher's desk): " << endl;
+    for (int i = 0; i < 7; i++) {
+        for (int j = 0; j < 4; j++)
+            cout << b[i][j] << "   ";
+        cout << endl;
+    }
+
+    return 0;
+}
+
+7.
+Problem: Given a 2-dimensional array of size n*n containing positive integers. Rearrange the elements of the matrix in the zigzag direction.
+Solution: Implement the function to sort the matrix elements row by row: sort the elements on the even rows ascending from left to right and the elements on the odd rows ascending from right to left. Then, perform the function to sort the elements on each column: in ascending order from top to bottom. Repeat the above 2 functions consecutively n times, we will get the required matrix.
+Code: 
+#include <iostream>
+#include <ctime>
+
+using namespace std;
+
+void swap(int* a, int* b) {
+	int* c;
+
+	c = new int;
+
+	*c = *a;
+	*a = *b;
+	*b = *c;
+
+	delete c;
+}
+
+void bubbleSort(int a[], int n) {
+	for (int i = 1; i < n; i++)
+		for (int j = n - 1; j >= i; j--)
+			if (a[j] < a[j - 1])
+				swap(a[j], a[j - 1]);
+}
+
+void sortColumn(int** a, int n) {
+	int* p = new int[n];
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++)
+			p[j] = a[j][i];
+		bubbleSort(p, n);
+		for (int j = 0; j < n; j++)
+			a[j][i] = p[j];
+	}
+	delete[]p;
+}
+
+void sortRow(int **a, int n) {
+	int* p = new int[n];
+	for (int i = 0; i < n; i++) {
+		if (i % 2 == 0) {
+			for (int j = 0; j < n; j++)
+				p[j] = a[i][j];
+			bubbleSort(p, n);
+			for (int j = 0; j < n; j++)
+				a[i][j] = p[j];
+		}
+		else {
+			for (int j = 0; j < n; j++)
+				p[j] = a[i][n - j - 1];
+			bubbleSort(p, n);
+			for (int j = 0; j < n; j++)
+				a[i][n - j - 1] = p[j];
+		}
+	}
+	delete[]p;
+}
+
+int main() {
+	srand((int)time(0));
+	int n, x;
+	cout << "n= ";
+	cin >> n;
+	int** a = new int* [n];
+	for (int i = 0; i < n; i++)
+		a[i] = new int[n];
+	cout << "Initial: " << endl;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			a[i][j] = rand() % 1000;
+			cout << a[i][j] << "   ";
+		}
+		cout << endl;
+	}
+
+	for (int i = 0; i < n; i++) {
+		sortRow(a, n);
+		sortColumn(a, n);
+	}
+	cout << "After:" << endl;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++)
+			cout << a[i][j] << "   ";
+		cout << endl;
+	}
+
+	return 0;
+}
+
+8.
+Problem: Find the present age of n people. Find the largest and smallest number of ages without sorting.
+Solution: Build a binary search tree, find the last leaf on the left branch and the last leaf on the right branch corresponding to the minimum and maximum age to find.
+Code:
+#include <iostream>
+#include <ctime>
+
+using namespace std;
+
+typedef struct node {
+	int data;
+	node* left;
+	node* right;
+}NodeType;
+
+void insert(NodeType*& t, int x) {
+	if (t == NULL) {
+		t = new NodeType;
+		t->data = x;
+		t->left = NULL;
+		t->right = NULL;
+	}
+	else {
+		if (x < t->data) 
+			return insert(t->left, x);
+		else 
+			return insert(t->right, x);
+	}
+}
+
+int minValue(const NodeType* t) {
+	while (t->left != NULL)
+		t = t->left;
+	return t->data;
+}
+
+int maxValue(const NodeType* t) {
+	while (t->right != NULL)
+		t = t->right;
+	return t->data;
+}
+
+int main() {
+	srand((int)time(0));
+	int n, x, min, max;
+	cout << "n= ";
+	cin >> n;
+	NodeType* t = NULL;
+
+	for (int i = 0; i < n; i++) {
+		x = rand() % 100 + 1;
+		insert(t, x);
+	}
+	min = minValue(t);
+	max = maxValue(t);
+	cout << "Minimum age: " << min << endl;
+	cout << "Oldest age: " << max << endl;
+	return 0;
+}
+
+9.
+Problem: Given a matrix of numbers n*n (n<=6) containing numbers from 1 to 100. Looking at it once, can you win by entering perfectly n*n numbers in the matrix?
+Solution: Make a matrix n*n, use the search algorithm to see if the input matches the array to look for
+Code:
+#include <iostream>
+#include <ctime>
+
+using namespace std;
+
+bool linearSearch(int a[], int x,int n) {
+	for (int i = 0; i < n; i++)
+		if (a[i] == x)
+			return true;
+	return false;
+}
+
+
+int main() {
+	srand((int)time(0));
+	int n, x, choice;
+	cout << "n= ";
+	cin >> n;
+	
+	int a[6][6];
+	int b[36] = { 0 }, k = 0;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			a[i][j] = rand() % 100 + 1;
+			b[k] = a[i][j];
+			k++;
+			cout << a[i][j] << " ";
+		}
+		cout << endl;
+	}
+	k = 0;
+	cout << "You are ready press 0.";
+	cin >> choice;
+	if (choice == 0) {
+		system("cls");
+		for (int i = 0; i < n * n; i++) {
+			cout << "Number you remember: ";
+			cin >> x;
+			bool flag = linearSearch(b, x, (n * n));
+			if (flag == false) {
+				cout << "Wrong number! You lose!" << endl;
+				break;
+			}
+			else {
+				cout << "Enter correctly! Try your best!" << endl;
+				k++;
+			}
+		}
+	}
+	if (k == (n * n))
+		cout << "You win!!!";
+	return 0;
+}
+
+10.
+Problem: From a graph with n vertices and only clear paths between connected vertices, create an adjacency matrix with n*n elements representing the graph and enter any two vertices, ask if those two vertices are related. communicate with each other or not?
+Solution: Make a matrix n*n. Set element value (i,j)= 0 when there is no connecting path from (i+1) to (j+1) and vice versa equal to 1 if there is a direct path from (i+1) to (j) +1). From the matrix, traverse the position of the two entered vertices and check if they are connected (the input value (i,j) is 0 or 1)
+Code:
+#include <iostream>
+
+using namespace std;
+
+struct graph {
+	int matrix[50][50];
+	int n;
+};
+
+void addPath(graph& g, int x, int y) {
+	g.matrix[x - 1][y - 1] = 1;
+	g.matrix[y - 1][x - 1] = 1;
+}
+
+bool test(graph G, int x, int y) {
+	return (G.matrix[x - 1][y - 1] != 0);
+}
+
+int main() {
+	graph G;
+	int choice = 1, x, y;
+
+	cout << "n= ";
+	cin >> G.n;
+	for (int i = 0; i < G.n; i++)
+		for (int j = 0; j < G.n; j++)
+			G.matrix[i][j] = 0;
+	do {
+		cout << "Add the path from x to y to the graph: " << endl;
+		cout << "x= ";
+		cin >> x;
+		cout << "y= ";
+		cin >> y;
+		addPath(G, x, y);
+		cout << "Enter any number to continue, want to stop entering 0: ";
+		cin >> choice;
+	} while (choice != 0);
+	cout << "Graph representation matrix:" << endl;
+	for (int i = 0; i < G.n; i++) {
+		for (int j = 0; j < G.n; j++)
+			cout << G.matrix[i][j] << "   ";
+		cout << endl;
+	}
+
+	cout << "Check the connection between vertices x and y:";
+	cout << "\nx= ";
+	cin >> x;
+	cout << "y= ";
+	cin >> y;
+	bool flag = test(G, x, y);
+	if (flag == true)
+		cout << "There is a direct path from vertex " << x << " to " << y;
+	else cout << "Trackless";
+
+	return 0;
+}
+
+
+
+ 
